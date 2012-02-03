@@ -54,9 +54,21 @@ void add_pat(char *str)
          pat[i] = 'l';
       } else if (str[i] >= 'A' && str[i] <= 'Z') {
          pat[i] = 'u';
+      } else if (
+         (str[i] >= 33 && str[i] <= 47) || /* !"#$%&'()*+,-./ */
+         (str[i] >= 58 && str[i] <= 64) || /* :;<=>?@         */
+         (str[i] >= 91 && str[i] <= 96) || /* [\]^_`          */
+         (str[i] >= 123 && str[i] <= 126)  /* {|}~            */
+         ) {
+         pat[i] = 's';
+      } else if (str[i] == '\n' || str[i] == 0) {
+         /* str shorter than PWLEN, skip this word */
+         return;
       } else {
-         /* TODO: Support special characters. */
-         fprintf(stderr, "unexpected charset in %s\n", str);
+         /* Unknown character */
+         #if 0
+         fprintf(stderr, "unexpected charset in %s (%c)\n", str, str[i]);
+         #endif
          return;
       }
    }
@@ -87,16 +99,29 @@ void print_pats(void)
    }
 }
 
-int main(void)
+void print_usage(char *progname)
+{
+   printf("Usage: %s <filename>\n\n", progname);
+   printf("Example:\n");
+   printf("%s pwgen.txt | sort +1nr -2 | awk '{printf \"./cudaHashcat-plus32.bin --gpu-watchdog=89 -a 3 example.hash %%s\\n\", $1}'\n\n", progname);
+}
+
+int main(int argc, char *argv[])
 {
    FILE *fp;
    char line[16];
 
-   /* TODO: take input from argv instead. */
-   fp = fopen("pwgen.txt", "r");
+   if (argc < 2) {
+      print_usage(argv[0]);
+      return 1;
+   }
+
+   fp = fopen(argv[1], "r");
    if (!fp) {
-      fprintf(stderr, "unable to open pwgen.txt for reading\n");
-      perror("pwgen.txt");
+      fprintf(stderr, "\nError: unable to open \"%s\" for reading\n", argv[1]);
+      perror(argv[1]);
+      fprintf(stderr, "\n");
+      print_usage(argv[0]);
       return 1;
    }
 
@@ -108,8 +133,6 @@ int main(void)
    }
 
    fclose(fp);
-
-   printf("n_pat = %d\n\n", n_pat);
 
    print_pats();
 
