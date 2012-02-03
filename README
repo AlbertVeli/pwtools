@@ -1,0 +1,7 @@
+Collection of simple hand-written tools to assist in password
+hash checking (mainly John the Ripper and oclHashcat-plus).
+
+* gen_brute - Generate brute force masks for use with oclHashcat-plus.
+* pwgen_stat - Generate brute masks for use with oclHashcat-plus based on list of passwords.
+
+More coming soon.
