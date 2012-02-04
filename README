@@ -3,6 +3,7 @@ hash checking (mainly John the Ripper and oclHashcat-plus).
 
 * gen_brute - Generate brute force masks for use with oclHashcat-plus.
 * pwgen_stat - Generate masks for use with oclHashcat-plus based on list of passwords.
+* move_mouse - Randomly move mouse pointer around to prevent screen to go blank. This prevents GPU to go into powersave mode and decrease hashcat performarce.
 
 EXAMPLES
 
