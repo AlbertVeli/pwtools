@@ -32,10 +32,12 @@
 #include <string.h>
 
 #define MAX 100000
-#define PWLEN 8 /* All passwords in list must be of this len. */
+/* TODO: set pwlen from cmdline, default to 8 */
+int pwlen = 8; /* Only look at passwords this len */
+#define MAXLEN 11 /* For allocations of arrays */
 
 struct pattern {
-   char str[PWLEN];
+   char str[MAXLEN];
    int num;
 };
 
@@ -45,9 +47,9 @@ int n_pat;
 void add_pat(char *str)
 {
    int i;
-   char pat[PWLEN];
+   char pat[MAXLEN];
 
-   for (i = 0; i < PWLEN; i++) {
+   for (i = 0; i < pwlen; i++) {
       if (str[i] >= '0' && str[i] <= '9') {
          pat[i] = 'd';
       } else if (str[i] >= 'a' && str[i] <= 'z') {
@@ -62,7 +64,7 @@ void add_pat(char *str)
          ) {
          pat[i] = 's';
       } else if (str[i] == '\n' || str[i] == 0) {
-         /* str shorter than PWLEN, skip this word */
+         /* str shorter than pwlen, skip this word */
          return;
       } else {
          /* Unknown character */
@@ -73,8 +75,14 @@ void add_pat(char *str)
       }
    }
 
+   /* Check that str is not longer than pwlen */
+   if (str[i] != '\n' && str[i] != 0) {
+      /* Neither newline nor 0, skip this word */
+      return;
+   }
+
    for (i = 0; i < n_pat; i++) {
-      if (memcmp(pat, patterns[i].str, PWLEN) == 0) {
+      if (memcmp(pat, patterns[i].str, pwlen) == 0) {
          /* found */
          patterns[i].num++;
          return;
@@ -82,7 +90,7 @@ void add_pat(char *str)
    }
    /* not found */
    if (i < MAX) {
-      memcpy(patterns[i].str, pat, PWLEN);
+      memcpy(patterns[i].str, pat, pwlen);
       n_pat++;
    }
 }
@@ -92,7 +100,7 @@ void print_pats(void)
    int i, j;
 
    for (i = 0; i < n_pat; i++) {
-      for (j = 0; j < PWLEN; j++) {
+      for (j = 0; j < pwlen; j++) {
          printf("?%c", patterns[i].str[j]);
       }
       printf(" %d\n", patterns[i].num + 1);
@@ -138,4 +146,3 @@ int main(int argc, char *argv[])
 
    return 0;
 }
-

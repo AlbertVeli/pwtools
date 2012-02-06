@@ -9,4 +9,5 @@ EXAMPLES
 
 ./gen_brute | awk '{print "./oclHashcat-plus32.bin --gpu-watchdog=89 -a 3 example.hash " $1}' > brute_lud_8.sh
 
-./pwgen_stat rockyou.txt | sort +1nr -2 | awk '{printf "./oclHashcat-plus32.bin --gpu-watchdog=89 -a 3 example.hash %s\n", $1}' > rockyou_8.sh
+echo 'OCL="./oclHashcat-plus32.bin -m 0 -a 3 example.hash"' > rockyou_8.sh
+./pwgen_stat rockyou.txt | sort +1nr -2 | awk '{printf "$OCL ", $1}' >> rockyou_8.sh
