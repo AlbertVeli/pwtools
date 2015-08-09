@@ -1,32 +1,40 @@
-eXe = gen_brute
-OBJS = gen_brute.o
+eXeS = gen_brute pwgen_stat permute
+# Comment out row below if no X
+#eXeS += move_mouse
 
-eXe2 = pwgen_stat
-OBJS2 = pwgen_stat.o
+gen_brute_OBJS = gen_brute.o
+pwgen_stat_OBJS = pwgen_stat.o
+permute_OBJS = permute.o
+move_mouse_OBJS = move_mouse.o
+move_mouse_LIBS = -lX11 -lXmu
 
-eXe3 = move_mouse
-OBJS3 = move_mouse.o
+#DEBUG = yes
+ifdef DEBUG
+DBGFLAGS = -g -O0
+else
+DBGFLAGS = -O3
+endif
+CFLAGS = $(DBGFLAGS) -pipe -W -Wall
 
-CC = gcc
-RM = rm
-CFLAGS = -W -Wall -O2
 LIBS =
-LIBS3 = -lX11 -lXmu
-LDFLAGS =
+RM = rm
 
-all: $(eXe) $(eXe2) $(eXe3)
+all: $(eXeS)
 
-$(eXe): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+gen_brute: $(gen_brute_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(gen_brute_OBJS) $(LIBS)
 
-$(eXe2): $(OBJS2)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS2) $(LIBS)
+pwgen_stat: $(pwgen_stat_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(pwgen_stat_OBJS) $(LIBS)
 
-$(eXe3): $(OBJS3)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS3) $(LIBS3)
+permute: $(permute_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(permute_OBJS) $(LIBS)
+
+move_mouse: $(move_mouse_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(move_mouse_OBJS) $(move_mouse_LIBS)
 
 .PHONY: clean
 
 clean:
-	$(RM) -f $(OBJS) $(OBJS2) $(OBJS3) $(eXe) $(eXe2) $(eXe3) *~
+	$(RM) -f gen_brute pwgen_stat permute move_mouse *.o *~
 
