@@ -1,0 +1,6 @@
+runmasks_config.py
+*.o
+gen_brute
+move_mouse
+permute
+pwgen_stat
