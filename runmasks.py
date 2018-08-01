@@ -38,16 +38,18 @@ import subprocess
 import sys
 import multiprocessing
 
-# If runmasks_config exists, load variables from there
-# else use default values.
+# If runmasks_config.py exists, load variables
+# from there else use default values.
 import os.path
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-config = 'runmasks_config.py'
+# Check for runmasks_config.py in same dir as runmasks.py
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(scriptdir)
+config = os.path.join(scriptdir, 'runmasks_config.py')
 if os.path.isfile(config):
+    print('Reading variables from', config)
     from runmasks_config import *
 else:
-    # Default values.
-    # Put these in runmasks_config.py to customize.
+    print('Using default values. Create runmasks_config.py to customize.')
     john = 'john'
     john_mode = 'Raw-SHA1'
     use_fork = True
@@ -74,7 +76,6 @@ john_mask_cmd= [john, '--format:' + john_mode, '--pot:' + john_potfile,
 def run_cmd(cmd):
     # cmd is a list of command and arguments
     try:
-        #result = subprocess.run(cmd)
         p = subprocess.Popen(cmd)
         print('DBG: pid =', p.pid)
         p.communicate()
@@ -128,7 +129,6 @@ def run_john_mask(mask):
 # --- main
 
 # Load masks
-print(sys.argv[0])
 if len(sys.argv) != 2:
     print('Usage:', sys.argv[0], '<mask file>')
     sys.exit(1)
